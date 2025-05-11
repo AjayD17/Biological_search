@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniProt Protein Search</title>
+    <link rel="stylesheet" href="{% static 'Bootstrap/css/bootstrap.min.css' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f58bbd;
+            padding-bottom: 5vh;
+        }
+
+        h1, h2 {
+            text-align: center;
+            margin-top: 4vh;
+            color: white;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .center-message {
+            text-align: center;
+            color: #343a40;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
+        a {
+            color: #007BFF;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .login-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: 10vh auto;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .login-container p {
+            color: red;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .login-container a {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .login-container a:hover {
+            background-color: #0056b3;
+        }
+
+        .search-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .search-box input[type="text"] {
+            border: 2px solid black;
+            border-radius: 5px;
+            padding: 10px;
+            width: 100%;
+            max-width: 400px;
+        }
+    </style>
+</head>
+<body>
+        <div class="container">
+            <div class="position-relative mt-4 mb-2 pt-1">
+                <h1 class="fw-bold text-center text-dark"><b>Biological Search & Visualization</b></h1>
+            </div>
+            <div class="row justify-content-center mt-4">
+                <div class="col-12">
+                    <form method="GET" action="" class="search-box">
+                        <input type="text" name="query" placeholder="Enter Protein Name" value="{{ query|default_if_none:'' }}">
+                        <button type="submit">Search</button>
+                    </form>
+                </div>
+            </div>
+
+            {% if query %}
+                <h2 class="mt-4 text-dark">
+                    Results for: "{{ query }}"
+                    {% if count %} – {{ count }} result{{ count|pluralize }} found {% endif %}
+                </h2>
+
+                {% if proteins %}
+                    <div class="row mt-4">
+                        {% for protein in proteins %}
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="result-card">
+                                    <strong>{{ protein.name }}</strong><br>
+                                    UniProt ID: 
+                                    <a href="https://www.uniprot.org/uniprot/{{ protein.uniprot_id }}" target="_blank">
+                                        {{ protein.uniprot_id }}
+                                    </a><br>
+                                    Organism: {{ protein.organism }}<br>
+                                    Gene Name: {{ protein.gene_name }}<br>
+                                    Sequence Length: {{ protein.sequence_length }} amino acids
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {% if message %}
+                        <p class="center-message">{{ message }}</p>
+                    {% endif %}
+                {% endif %}
+            {% elif error %}
+                <p class="center-message" style="color:red; font-weight: bold;">{{ error }}</p>
+            {% endif %}
+        </div>
+
+</body>
+</html>
